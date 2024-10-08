@@ -1,3 +1,4 @@
+import 'package:employee/screens/order_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/employee_screen.dart';
 import 'screens/home_screen.dart';
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: HomeScreen(),
+      home: OrdersScreen(),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../model/employee_model.dart';
+import '../models/employee_model.dart';
 
 class EmployeeItemWidget extends StatelessWidget {
   final Employee employee;

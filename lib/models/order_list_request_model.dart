@@ -1,4 +1,4 @@
-// lib/model/order_model.dart
+// lib/model/order_list_request_model.dart
 class OrderListRequest {
   final int foodId;
   final int quantity;

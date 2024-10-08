@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/employee_service.dart';
-import '../model/employee_model.dart';
+import '../models/employee_model.dart';
 import '../widgets/employee_item_widget.dart';
 
 class EmployeeScreen extends StatefulWidget {
@@ -230,11 +230,11 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     });
                   },
                   items: [
-                    DropdownMenuItem(value: -1, child: Text('All')),
-                    DropdownMenuItem(value: 0, child: Text('Available')),
-                    DropdownMenuItem(value: 1, child: Text('Working')),
-                    DropdownMenuItem(value: 2, child: Text('On Leave')),
-                    DropdownMenuItem(value: 3, child: Text('Resigned')),
+                    DropdownMenuItem(value: -1, child: Text('All', style: TextStyle(color: Colors.blue))),
+                    DropdownMenuItem(value: 0, child: Text('Available', style: TextStyle(color: Colors.green[400]))),
+                    DropdownMenuItem(value: 1, child: Text('Working', style: TextStyle(color: Colors.blue))),
+                    DropdownMenuItem(value: 2, child: Text('On Leave', style: TextStyle(color: Colors.blue))),
+                    DropdownMenuItem(value: 3, child: Text('Resigned', style: TextStyle(color: Colors.blue))),
                   ],
                   hint: Text('Filter by Status'),
                 ),

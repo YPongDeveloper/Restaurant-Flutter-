@@ -1,9 +1,9 @@
 // lib/screens/home/home_screen.dart
 import 'package:flutter/material.dart';
-import '../../model/food_model.dart';
+import '../../models/food_model.dart';
 import '../../services/menu_service.dart';
 import '../../widgets/food_card.dart'; // Import the FoodCard widget
-import '../../model/order_model.dart'; // Import the OrderRequest model
+import '../../models/order_list_request_model.dart'; // Import the OrderRequest model
 import '../../services/order_service.dart'; // Import OrderService
 
 class HomeScreen extends StatefulWidget {

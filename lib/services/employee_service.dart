@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config/api_constants.dart';
-import '../model/employee_model.dart';
+import '../models/employee_model.dart';
 
 class EmployeeService {
   Future<List<Employee>> fetchEmployees() async {
