@@ -24,8 +24,7 @@ class FoodCard extends StatelessWidget {
           // Add background image with BoxDecoration
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: NetworkImage(
-                  'https://scontent.fbkk13-3.fna.fbcdn.net/v/t1.15752-9/271527617_458558425802892_6061554732953425168_n.jpg?stp=dst-jpg_s2048x2048&_nc_cat=110&ccb=1-7&_nc_sid=9f807c&_nc_eui2=AeEsBWMEXiWgkzhj_W0j_f8qBo_14t7Diy4Gj_Xi3sOLLodQG_hA_WtM6ywzeE4PR-W940LQE5a6kORZe8Ph21I_&_nc_ohc=w9WCnU5tQ8MQ7kNvgHWMEXO&_nc_ht=scontent.fbkk13-3.fna&_nc_gid=AqK2aeifXzAiFPNLAJJVugM&oh=03_Q7cD1QH5XLcp18otfIn1hcMYMblY68_Z6SkB_fcrre1g1NgSQQ&oe=672862FD'), // Background image
+              image: AssetImage('lib/assets/${food.foodName}.jpg'),
               fit: BoxFit.cover, // Adjust image fit
               colorFilter: ColorFilter.mode(
                 Colors.black.withOpacity(0.4), // Add dark overlay for readability

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/employee_screen.dart';
-import '../screens/home_screen.dart';
+import '../screens/home/home_screen.dart';
 import '../screens/order_screen.dart';
 
 class AppRoutes {
@@ -13,7 +13,7 @@ class AppRoutes {
       case '/orders':
         return MaterialPageRoute(builder: (_) => OrdersScreen());
       default:
-        return MaterialPageRoute(builder: (_) => Scaffold(body: Center(child: Text('No route defined'))));
+        return MaterialPageRoute(builder: (_) => HomeScreen());
     }
   }
 }
