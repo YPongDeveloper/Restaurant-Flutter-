@@ -13,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Food>> futureMenu;
-  Map<int, int> orderCount = {}; // Holds the quantity of each food ordered
+  Map<int, int> orderCount = {};
   final TextEditingController _customerCountController = TextEditingController();
 
   @override
@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) {
         return FutureBuilder<List<Food>>(
-          future: futureMenu, // This gets the menu items asynchronously
+          future: futureMenu,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return AlertDialog(
@@ -60,23 +60,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               );
             } else if (snapshot.hasData) {
-              List<Food> menu = snapshot.data!; // Extract the list of foods
+              List<Food> menu = snapshot.data!;
 
-              // Create a list of order details based on the current orderCount
               List<Widget> orderDetails = orderCount.entries
-                  .where((entry) => entry.value > 0) // Only include items with quantity > 0
+                  .where((entry) => entry.value > 0)
                   .map((entry) {
                 final foodId = entry.key;
                 final quantity = entry.value;
 
-                // Find the food item based on the foodId
                 Food? orderedFood = menu.firstWhere(
                       (food) => food.foodId == foodId,
                   orElse: () => Food(
                     foodId: 0,
                     foodName: 'Unknown',
                     description: 'No description available',
-                    image: 'assets/images/default_image.png', // Default image path
+                    image: 'assets/images/default_image.png',
                     price: 0,
                     available: 0,
                     calories: 0,
@@ -102,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: 16),
                     Text('Your Order:'),
-                    ...orderDetails, // Display the order details
+                    ...orderDetails,
                   ],
                 ),
                 actions: [
@@ -110,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: ElevatedButton.styleFrom(primary: Colors.red),
                     onPressed: () {
                       _customerCountController.clear();
-                      Navigator.of(context).pop(); // Close the dialog
+                      Navigator.of(context).pop();
                     },
                     child: Text('Cancel'),
                   ),
@@ -119,17 +117,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () async {
                       String customerCount = _customerCountController.text;
 
-                      // Input validation
                       if (customerCount.isEmpty || int.tryParse(customerCount) == null || int.parse(customerCount) < 0) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Please enter a valid number of customers.')),
                         );
-                        return; // Don't proceed if invalid
+                        return;
                       }
 
-                      // Prepare the order request
                       List<OrderListRequest> orderList = orderCount.entries
-                          .where((entry) => entry.value > 0) // Only include items with quantity > 0
+                          .where((entry) => entry.value > 0)
                           .map((entry) => OrderListRequest(
                         foodId: entry.key,
                         quantity: entry.value,
@@ -142,16 +138,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
 
                       try {
-                        await OrderService().createOrder(orderRequest); // Call the service to create order
+                        await OrderService().createOrder(orderRequest);
 
-                        // Clear the order count and customer count after successful submission
                         setState(() {
-                          orderCount.clear(); // Clear order counts
-                          _customerCountController.clear(); // Clear the text field
-                          futureMenu = MenuService().fetchMenu(); // Reload the menu
+                          orderCount.clear();
+                          _customerCountController.clear();
+                          futureMenu = MenuService().fetchMenu();
                         });
 
-                        Navigator.of(context).pop(); // Close the dialog
+                        Navigator.of(context).pop();
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Failed to create order: $e')),
@@ -197,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.shopping_cart),
-            onPressed: _showOrderDialog, // Show the order dialog when pressed
+            onPressed: _showOrderDialog,
           ),
         ],
       ),

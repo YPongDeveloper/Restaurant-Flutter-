@@ -11,7 +11,7 @@ class EmployeeScreen extends StatefulWidget {
 class _EmployeeScreenState extends State<EmployeeScreen> {
   final EmployeeService employeeService = EmployeeService();
   List<Employee> employees = [];
-  int selectedStatus = -1; // ตัวแปรสำหรับเก็บค่าของสถานะที่เลือก (-1 หมายถึงไม่กรอง)
+  int selectedStatus = -1;
 
   @override
   void initState() {
@@ -26,7 +26,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         employees = employeeList;
       });
     } catch (e) {
-      // Handle error
+
     }
   }
 
@@ -46,7 +46,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         TextEditingController lastNameController = TextEditingController(text: employee.lastName);
         int newStatus = employee.status;
 
-        return StatefulBuilder( // ใช้ StatefulBuilder เพื่อให้ dropdown ทำงานได้
+        return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
               title: Text('Edit Employee'),
@@ -71,8 +71,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     items: [
                       DropdownMenuItem(value: 0, child: Text('Available')),
                       DropdownMenuItem(value: 1, child: Text('Working')),
-                      DropdownMenuItem(value: 2, child: Text('On Leave')),
-                      DropdownMenuItem(value: 3, child: Text('Resigned')),
+                      DropdownMenuItem(value: 2, child: Text('Adsent from work')),
+                      DropdownMenuItem(value: 3, child: Text('Fired')),
                     ],
                   ),
                 ],
@@ -111,10 +111,9 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
             TextButton(
               onPressed: () async {
                 await employeeService.updateEmployee(employee.employeeId, firstName, lastName, status);
-                Navigator.of(context).pop(); // Close confirmation dialog
-                Navigator.of(context).pop(); // Close edit dialog
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
 
-                // Refresh employee list to show updated data
                 fetchEmployees(); // อัปเดตหน้าจอ
               },
               child: Text('Confirm'),
@@ -125,14 +124,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     );
   }
 
-  // Confirm Termination Dialog
   void confirmTermination(Employee employee) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Termination'),
-          content: Text('Are you sure you want to terminate this employee?'),
+          title: Text('Confirm Fire'),
+          content: Text('Are you sure you want to fire this employee?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -141,7 +139,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
             TextButton(
               onPressed: ()  async {
                 await employeeService.terminateEmployee(employee.employeeId);
-                await fetchEmployees(); // Refresh employee list after termination
+                await fetchEmployees();
                 Navigator.of(context).pop();
               },
               child: Text('Confirm'),
@@ -180,16 +178,14 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
             ),
             TextButton(
               onPressed: () async {
-                // Send POST request to hire employee
+
                 await employeeService.hireEmployee(
                   firstNameController.text,
                   lastNameController.text,
                 );
 
-                // Fetch updated employee list and refresh UI
                 await fetchEmployees();
 
-                // Close dialog after completion
                 Navigator.of(context).pop();
               },
               child: Text('Confirm'),
@@ -209,13 +205,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.add),
-            onPressed: addEmployee, // Show add employee dialog
+            onPressed: addEmployee,
           ),
         ],
       ),
       body: Column(
         children: [
-          // Dropdown ตัวกรองสถานะ
+
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -230,11 +226,11 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     });
                   },
                   items: [
-                    DropdownMenuItem(value: -1, child: Text('All', style: TextStyle(color: Colors.blue))),
+                    DropdownMenuItem(value: -1, child: Text('All', style: TextStyle(color: Colors.black))),
                     DropdownMenuItem(value: 0, child: Text('Available', style: TextStyle(color: Colors.green[400]))),
-                    DropdownMenuItem(value: 1, child: Text('Working', style: TextStyle(color: Colors.blue))),
-                    DropdownMenuItem(value: 2, child: Text('On Leave', style: TextStyle(color: Colors.blue))),
-                    DropdownMenuItem(value: 3, child: Text('Resigned', style: TextStyle(color: Colors.blue))),
+                    DropdownMenuItem(value: 1, child: Text('Working', style: TextStyle(color: Colors.orange))),
+                    DropdownMenuItem(value: 2, child: Text('Absent from work', style: TextStyle(color: Colors.blue))),
+                    DropdownMenuItem(value: 3, child: Text('Fired', style: TextStyle(color: Colors.red))),
                   ],
                   hint: Text('Filter by Status'),
                 ),

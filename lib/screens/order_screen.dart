@@ -11,7 +11,7 @@ class OrdersScreen extends StatefulWidget {
 class _OrdersScreenState extends State<OrdersScreen> {
   late Future<List<Order>> futureOrders;
   List<Order>? filteredOrders;
-  int? selectedStatus; // Add a variable to hold the selected status
+  int? selectedStatus;
 
   @override
   void initState() {
@@ -28,7 +28,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       ),
       body: Column(
         children: [
-          // Dropdown to filter by status
+
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -41,34 +41,34 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   onChanged: (int? newStatus) {
                     setState(() {
                       selectedStatus = newStatus;
-                      // Update filteredOrders based on selected status
+
                     });
                   },
                   items: [
                     DropdownMenuItem(
                       value: null,
-                      child: Text('All', style: TextStyle(color: Colors.blue)), // Customize the color for 'All'
+                      child: Text('All', style: TextStyle(color: Colors.blue)),
                     ),
                     DropdownMenuItem(
                       value: 1,
-                      child: Text('Waiting', style: TextStyle(color: Colors.orange)), // Customize the color for 'Waiting'
+                      child: Text('Waiting', style: TextStyle(color: Colors.orange)),
                     ),
                     DropdownMenuItem(
                       value: 2,
-                      child: Text('Eating', style: TextStyle(color: Colors.green)), // Customize the color for 'Eating'
+                      child: Text('Eating', style: TextStyle(color: Colors.green)),
                     ),
                     DropdownMenuItem(
                       value: 4,
-                      child: Text('Paid', style: TextStyle(color: Colors.purple)), // Customize the color for 'Paid'
+                      child: Text('Paid', style: TextStyle(color: Colors.purple)),
                     ),
                     DropdownMenuItem(
                       value: 3,
-                      child: Text('Canceled', style: TextStyle(color: Colors.red)), // Customize the color for 'Canceled'
+                      child: Text('Canceled', style: TextStyle(color: Colors.red)),
                     ),
                   ],
-                  dropdownColor: Colors.white, // Dropdown background color
-                  iconEnabledColor: Colors.black, // Icon color
-                  style: TextStyle(color: Colors.black), // Selected item text color
+                  dropdownColor: Colors.white,
+                  iconEnabledColor: Colors.black,
+                  style: TextStyle(color: Colors.black),
                 ),
 
               ),
@@ -84,11 +84,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
                   List<Order>? orders = snapshot.data;
-                  // Filter orders based on selected status
+
                   if (selectedStatus != null) {
                     filteredOrders = orders?.where((order) => order.status == selectedStatus).toList();
                   } else {
-                    filteredOrders = orders; // Show all orders if no filter is selected
+                    filteredOrders = orders;
                   }
                   return ListView.builder(
                     itemCount: filteredOrders?.length ?? 0,
