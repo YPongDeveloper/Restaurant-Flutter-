@@ -178,24 +178,68 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.green[100],
       appBar: AppBar(
-      backgroundColor: Color(0xff123a86),
-        title: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-                color: Colors.green
-          ),
-            child: Padding(
+      backgroundColor: Color(0xff6fbb0f),
+        title: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text('Pir Restaurant'),
-            )),
+            ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: _showOrderDialog,
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30)
+                  ,color: Colors.yellow[200]
+            ),
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: _showOrderDialog,
+            ),
           ),
         ],
       ),
+      drawer: Drawer(
+        backgroundColor: Colors.blue[50],
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Home',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home, color: Colors.red), // เปลี่ยนสีเป็นสีแดง
+              title: Text('Home',style: TextStyle(color: Colors.red),),
+              onTap: () {
+                Navigator.pushNamed(context, '/home');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person, color: Colors.green), // เปลี่ยนสีเป็นสีเขียว
+              title: Text('Employees'),
+              onTap: () {
+                Navigator.pushNamed(context, '/employees');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_bag, color: Colors.orange), // เปลี่ยนสีเป็นสีส้ม
+              title: Text('Orders'),
+              onTap: () {
+                Navigator.pushNamed(context, '/orders');
+              },
+            ),
+          ],
+        ),
+      ),
+
       body: FutureBuilder<List<Food>>(
         future: futureMenu,
         builder: (context, snapshot) {

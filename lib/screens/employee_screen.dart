@@ -13,6 +13,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   List<Employee> employees = [];
   int selectedStatus = -1;
 
+
   @override
   void initState() {
     super.initState();
@@ -200,14 +201,63 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.yellow[100],
       appBar: AppBar(
+        backgroundColor: Colors.yellow[400],
         title: Text('Employee List'),
         actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: addEmployee,
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: Colors.green[200]
+            ),
+            child: IconButton(
+              icon: Icon(Icons.add),
+              onPressed: addEmployee,
+            ),
           ),
         ],
+      ),
+      drawer: Drawer(
+        backgroundColor: Colors.blue[50],
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Employee',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home, color: Colors.red), // เปลี่ยนสีเป็นสีแดง
+              title: Text('Home'),
+              onTap: () {
+                Navigator.pushNamed(context, '/home');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person, color: Colors.green), // เปลี่ยนสีเป็นสีเขียว
+              title: Text('Employees',style: TextStyle(color: Colors.red),),
+              onTap: () {
+                Navigator.pushNamed(context, '/employees');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_bag, color: Colors.orange), // เปลี่ยนสีเป็นสีส้ม
+              title: Text('Orders'),
+              onTap: () {
+                Navigator.pushNamed(context, '/orders');
+              },
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -218,21 +268,25 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: DropdownButton<int>(
-                  value: selectedStatus,
-                  onChanged: (int? value) {
-                    setState(() {
-                      selectedStatus = value!;
-                    });
-                  },
-                  items: [
-                    DropdownMenuItem(value: -1, child: Text('All', style: TextStyle(color: Colors.black))),
-                    DropdownMenuItem(value: 0, child: Text('Available', style: TextStyle(color: Colors.green[400]))),
-                    DropdownMenuItem(value: 1, child: Text('Working', style: TextStyle(color: Colors.orange))),
-                    DropdownMenuItem(value: 2, child: Text('Absent from work', style: TextStyle(color: Colors.blue))),
-                    DropdownMenuItem(value: 3, child: Text('Fired', style: TextStyle(color: Colors.red))),
-                  ],
-                  hint: Text('Filter by Status'),
+                child: Container(
+                      color: Colors.red[50],
+                  child: DropdownButton<int>(
+                    borderRadius: BorderRadius.circular(16),
+                    value: selectedStatus,
+                    onChanged: (int? value) {
+                      setState(() {
+                        selectedStatus = value!;
+                      });
+                    },
+                    items: [
+                      DropdownMenuItem(value: -1, child: Text('All', style: TextStyle(color: Colors.black))),
+                      DropdownMenuItem(value: 0, child: Text('Available', style: TextStyle(color: Colors.green[400]))),
+                      DropdownMenuItem(value: 1, child: Text('Working', style: TextStyle(color: Colors.orange))),
+                      DropdownMenuItem(value: 2, child: Text('Absent from work', style: TextStyle(color: Colors.blue))),
+                      DropdownMenuItem(value: 3, child: Text('Fired', style: TextStyle(color: Colors.red))),
+                    ],
+                    hint: Text('Filter by Status'),
+                  ),
                 ),
               ),
             ],

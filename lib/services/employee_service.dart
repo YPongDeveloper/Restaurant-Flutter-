@@ -5,7 +5,7 @@ import '../models/employee_model.dart';
 
 class EmployeeService {
   Future<List<Employee>> fetchEmployees() async {
-    final response = await http.get(Uri.parse(ApiConstants.employeesEndpoint));
+    final response = await http.get(Uri.parse(ApiConstants.employeesAPI));
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body)['data'];
       return data.map((e) => Employee.fromJson(e)).toList();
@@ -15,7 +15,7 @@ class EmployeeService {
 
   Future<void> updateEmployee(int employeeId, String firstName, String lastName, int status) async {
     final response = await http.put(
-      Uri.parse('http://localhost:8080/employee/edit/$employeeId'),
+      Uri.parse('${ApiConstants.employeesAPI}/edit/$employeeId'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         'employee_id': employeeId,
@@ -34,7 +34,7 @@ class EmployeeService {
   }
   Future<void> terminateEmployee(int employeeId) async {
     final response = await http.put(
-      Uri.parse('http://localhost:8080/employee/fire/$employeeId'),
+      Uri.parse('${ApiConstants.employeesAPI}/fire/$employeeId'),
       headers: {"Content-Type": "application/json"},
     );
     if (response.statusCode != 200) {
@@ -43,7 +43,7 @@ class EmployeeService {
   }
   Future<void> hireEmployee(String firstName, String lastName) async {
     final response = await http.post(
-      Uri.parse('http://localhost:8080/employee/hire'),
+      Uri.parse('${ApiConstants.employeesAPI}/hire'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "first_name": firstName,

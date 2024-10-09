@@ -2,12 +2,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/order_list_request_model.dart'; // Import your order model
-import '/config/api_config.dart';
+import '../config/api_constants.dart';
 import '../models/order_model.dart';
 import '../models/order_response_model.dart';
 
 class OrderService {
-  static const String _baseUrl = 'http://localhost:8080/order/create';
+  static const String _baseUrl = '${ApiConstants.orderAPI}/create';
 
   Future<void> createOrder(OrderRequest orderRequest) async {
     final response = await http.post(
@@ -27,7 +27,7 @@ class OrderService {
     }
   }
   Future<List<Order>> fetchOrders() async {
-    final response = await http.get(Uri.parse(apiConfig.baseUrl+'orders'));
+    final response = await http.get(Uri.parse(ApiConstants.orderAPI));
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
@@ -38,7 +38,7 @@ class OrderService {
   }
 
   Future<OrderResponse> fetchOrderById(int orderId) async {
-    final response = await http.get(Uri.parse(apiConfig.baseUrl+'order/$orderId'));
+    final response = await http.get(Uri.parse(ApiConstants.orderAPI+'/$orderId'));
 
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body)['data'];
@@ -57,7 +57,7 @@ class OrderService {
       statusCase ="paid";
     }
     final response = await http.put(
-      Uri.parse('${apiConfig.baseUrl}order/$statusCase/$orderId'),
+      Uri.parse('${ApiConstants.orderAPI}/$statusCase/$orderId'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

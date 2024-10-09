@@ -22,9 +22,51 @@ class _OrdersScreenState extends State<OrdersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFE5D7FF),
       appBar: AppBar(
         title: Text('Orders'),
         backgroundColor: Color(0xFFC9A1EF),
+      ),
+      drawer: Drawer(
+        backgroundColor: Colors.blue[50],
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Orders',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home, color: Colors.red), // เปลี่ยนสีเป็นสีแดง
+              title: Text('Home'),
+              onTap: () {
+                Navigator.pushNamed(context, '/home');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person, color: Colors.green), // เปลี่ยนสีเป็นสีเขียว
+              title: Text('Employees'),
+              onTap: () {
+                Navigator.pushNamed(context, '/employees');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_bag, color: Colors.orange), // เปลี่ยนสีเป็นสีส้ม
+              title: Text('Orders',style: TextStyle(color: Colors.red),),
+              onTap: () {
+                Navigator.pushNamed(context, '/orders');
+              },
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -32,45 +74,51 @@ class _OrdersScreenState extends State<OrdersScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButton<int>(
-                  borderRadius: BorderRadius.circular(16),
-                  value: selectedStatus,
-                  hint: Text('Filter by Status', style: TextStyle(color: Colors.grey)),
-                  onChanged: (int? newStatus) {
-                    setState(() {
-                      selectedStatus = newStatus;
-
-                    });
-                  },
-                  items: [
-                    DropdownMenuItem(
-                      value: null,
-                      child: Text('All', style: TextStyle(color: Colors.blue)),
-                    ),
-                    DropdownMenuItem(
-                      value: 1,
-                      child: Text('Waiting', style: TextStyle(color: Colors.orange)),
-                    ),
-                    DropdownMenuItem(
-                      value: 2,
-                      child: Text('Eating', style: TextStyle(color: Colors.green)),
-                    ),
-                    DropdownMenuItem(
-                      value: 4,
-                      child: Text('Paid', style: TextStyle(color: Colors.purple)),
-                    ),
-                    DropdownMenuItem(
-                      value: 3,
-                      child: Text('Canceled', style: TextStyle(color: Colors.red)),
-                    ),
-                  ],
-                  dropdownColor: Colors.white,
-                  iconEnabledColor: Colors.black,
-                  style: TextStyle(color: Colors.black),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.white
                 ),
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: DropdownButton<int>(
+                    borderRadius: BorderRadius.circular(16),
+                    value: selectedStatus,
+                    hint: Text('Filter by Status', style: TextStyle(color: Colors.grey)),
+                    onChanged: (int? newStatus) {
+                      setState(() {
+                        selectedStatus = newStatus;
 
+                      });
+                    },
+                    items: [
+                      DropdownMenuItem(
+                        value: null,
+                        child: Text('All', style: TextStyle(color: Colors.blue)),
+                      ),
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text('Waiting', style: TextStyle(color: Colors.orange)),
+                      ),
+                      DropdownMenuItem(
+                        value: 2,
+                        child: Text('Eating', style: TextStyle(color: Colors.green)),
+                      ),
+                      DropdownMenuItem(
+                        value: 4,
+                        child: Text('Paid', style: TextStyle(color: Colors.purple)),
+                      ),
+                      DropdownMenuItem(
+                        value: 3,
+                        child: Text('Canceled', style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                    dropdownColor: Colors.white,
+                    iconEnabledColor: Colors.black,
+                    style: TextStyle(color: Colors.black),
+                  ),
+
+                ),
               ),
             ],
           ),
@@ -99,10 +147,19 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           showOrderDetails(context, order.orderId);
                         },
                         child: Container(
+
                           padding: EdgeInsets.all(10),
                           margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey.shade600,
+                                  spreadRadius: 1,
+                                  blurRadius: 13
+                              )
+                            ] ,
                             border: Border.all(color: Colors.grey),
                           ),
                           child: Column(
