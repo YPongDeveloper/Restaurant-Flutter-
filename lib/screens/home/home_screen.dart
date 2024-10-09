@@ -33,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
     {"category_id": 12, "category_name": "Noodles"},
     {"category_id": 13, "category_name": "Sushi"},
     {"category_id": 14, "category_name": "Curry"},
-    {"category_id": 15, "category_name": "Sushi"},
   ];
 
   @override
@@ -65,8 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void _scrollRight() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
-        _scrollController.offset + 100, // Adjust the scroll distance as needed
-        duration: Duration(milliseconds: 300),
+        _scrollController.offset + 240, // Adjust the scroll distance as needed
+        duration: Duration(milliseconds: 900),
         curve: Curves.easeInOut,
       );
     }
@@ -75,8 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void _scrollLeft() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
-        _scrollController.offset - 100, // Adjust the scroll distance as needed
-        duration: Duration(milliseconds: 300),
+        _scrollController.offset - 240, // Adjust the scroll distance as needed
+        duration: Duration(milliseconds: 900),
         curve: Curves.easeInOut,
       );
     }

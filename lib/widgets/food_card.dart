@@ -40,9 +40,10 @@ class FoodCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch, // Align text to the start
             children: [
               Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 8), // Top spacing
+                  SizedBox(height: 10), // Top spacing
                   Text(
                     food.foodName,
                     style: TextStyle(
@@ -51,7 +52,7 @@ class FoodCard extends StatelessWidget {
                       color: Colors.white, // Text color for contrast
                     ),
                   ),
-                  SizedBox(height: 30),
+
                   Text(
                     'Price: ฿${food.price}',
                     style: TextStyle(color: Colors.white,
@@ -77,9 +78,19 @@ class FoodCard extends StatelessWidget {
                     ),
                   ),
                   // Display order count
-                  Text(
-                    '$orderCount',
-                    style: TextStyle(fontSize: 16, color: Colors.white), // Text color for contrast
+                  Container(
+                    
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12)
+                    ),
+                    width: 45,
+                    child: Center(
+                      child: Text(
+                        '$orderCount',
+                        style: TextStyle(fontSize: 16, color: Colors.black), // Text color for contrast
+                      ),
+                    ),
                   ),
                   // Increment button
                   Container(
