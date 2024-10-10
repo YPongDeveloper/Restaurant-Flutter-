@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config/api_constants.dart';
+import '../models/food_info_model.dart';
 import '../models/food_model.dart';
 
 class MenuService {
@@ -15,6 +16,17 @@ class MenuService {
       return menu;
     } else {
       throw Exception('Failed to load menu');
+    }
+  }
+  Future<FoodInfo> fetchFoodById(int foodId) async {
+    final url = Uri.parse('${ApiConstants.foodAPI}/$foodId');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body)['data'];
+      return FoodInfo.fromJson(data);
+    } else {
+      throw Exception('Failed to load food details');
     }
   }
 }

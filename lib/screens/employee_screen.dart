@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/employee_service.dart';
 import '../models/employee_model.dart';
 import '../widgets/employee_item_widget.dart';
+import 'employee_info_screen.dart';
 
 class EmployeeScreen extends StatefulWidget {
   @override
@@ -296,10 +297,17 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
               itemCount: getFilteredEmployees().length,
               itemBuilder: (context, index) {
                 final employee = getFilteredEmployees()[index];
-                return EmployeeItemWidget(
-                  employee: employee,
-                  onEdit: () => editEmployee(employee),
-                  onDelete: () => confirmTermination(employee),
+                return InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => EmployeeInfoScreen(employeeId: employee.employeeId),
+                    ));
+                  },
+                  child: EmployeeItemWidget(
+                    employee: employee,
+                    onEdit: () => editEmployee(employee),
+                    onDelete: () => confirmTermination(employee),
+                  ),
                 );
               },
             ),

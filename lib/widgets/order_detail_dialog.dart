@@ -43,7 +43,7 @@ class _OrderDetailDialogState extends State<OrderDetailDialog> {
           );
         }
 
-        final order = snapshot.data!;
+        final  order = snapshot.data!;
         return AlertDialog(
           title: Text('Order Details'),
           content: SingleChildScrollView(

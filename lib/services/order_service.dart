@@ -70,4 +70,14 @@ class OrderService {
       throw Exception('Failed to update order status');
     }
   }
+  Future<List<Order>> fetchOrdersByEmployee(int employeeId) async {
+    final response = await http.get(Uri.parse('${ApiConstants.orderAPI}/employee/$employeeId'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> orderData = json.decode(response.body)['data'];
+      return orderData.map((json) => Order.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load orders');
+    }
+  }
 }

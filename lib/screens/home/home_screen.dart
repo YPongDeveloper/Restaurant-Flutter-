@@ -3,7 +3,8 @@ import '../../../models/food_model.dart';
 import '../../../services/menu_service.dart';
 import '../../../widgets/food_card.dart'; // Import the FoodCard widget
 import '../../../models/order_list_request_model.dart'; // Import the OrderRequest model
-import '../../../services/order_service.dart'; // Import OrderService
+import '../../../services/order_service.dart';
+import 'food_info_screen.dart'; // Import OrderService
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -260,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.blue,
                 ),
                 child: Text(
-                  'Employee',
+                  'Home',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -383,11 +384,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: filteredMenu.length,
                   itemBuilder: (context, index) {
                     final food = filteredMenu[index];
-                    return FoodCard(
-                      food: food,
-                      orderCount: orderCount[food.foodId] ?? 0,
-                      incrementOrder: () => incrementOrder(food.foodId),
-                      decrementOrder: () => decrementOrder(food.foodId),
+                    return InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => FoodInfoScreen(foodId: food.foodId),
+                        ));
+                      },
+                      child: FoodCard(
+                        food: food,
+                        orderCount: orderCount[food.foodId] ?? 0,
+                        incrementOrder: () => incrementOrder(food.foodId),
+                        decrementOrder: () => decrementOrder(food.foodId),
+                      ),
                     );
                   },
                 );
