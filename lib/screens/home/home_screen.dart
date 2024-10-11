@@ -128,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     foodId: 0,
                     foodName: 'Unknown',
                     description: 'No description available',
-                    image: 'assets/images/default_image.png',
+                    imageBase64: 'assets/images/default_image.png',
                     price: 0,
                     available: 0,
                     calories: 0,
