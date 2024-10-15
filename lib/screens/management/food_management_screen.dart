@@ -25,33 +25,42 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Food Menu'),
+        title: Text('Manage Food Menu', style: TextStyle(color: Color(0xFFEEEEEE))),
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Color(0xFF222831),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: Icon(Icons.add, color: Color(0xFFEEEEEE)),
             onPressed: () {
               _showCreatePopup(context);
             },
           ),
         ],
       ),
-      body: FutureBuilder<List<Food>>(
-        future: _foodsFuture,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          }
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double screenWidth = constraints.maxWidth;
+          int itemsPerRow = screenWidth > 600 ? 3 : 2;
 
-          final foods = snapshot.data!;
-          return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 3 / 2,
-            ),
-            itemCount: foods.length,
-            itemBuilder: (context, index) {
-              final food = foods[index];
-              return _buildFoodCard(context, food);
+          return FutureBuilder<List<Food>>(
+            future: _foodsFuture,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
+
+              final foods = snapshot.data!;
+              return GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: itemsPerRow,
+                  childAspectRatio: 0.8,
+                ),
+                itemCount: foods.length,
+                itemBuilder: (context, index) {
+                  final food = foods[index];
+                  return _buildFoodCard(context, food);
+                },
+              );
             },
           );
         },
@@ -61,12 +70,26 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
 
   Widget _buildFoodCard(BuildContext context, Food food) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      elevation: 8,
+      color: Color(0xFF393E46), // Background color for the card
       child: Stack(
         children: [
           Positioned.fill(
-            child: Image.memory(
-              base64Decode(food.imageBase64),
-              fit: BoxFit.cover,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15.0),
+              child: ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.4),
+                  BlendMode.darken,
+                ),
+                child: Image.memory(
+                  base64Decode(food.imageBase64),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
           Positioned(
@@ -75,8 +98,8 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(food.foodName, style: TextStyle(color: Colors.white, fontSize: 18)),
-                Text('\$${food.price}', style: TextStyle(color: Colors.white)),
+                Text(food.foodName, style: TextStyle(color: Color(0xFFEEEEEE), fontSize: 18)),
+                Text('\$${food.price}', style: TextStyle(color: Color(0xFFEEEEEE))),
               ],
             ),
           ),
@@ -87,14 +110,14 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
               children: [
                 IconButton(
                   icon: Icon(Icons.edit),
-                  color: Colors.white,
+                  color: Color(0xFF00ADB5),
                   onPressed: () {
                     _showEditPopup(context, food);
                   },
                 ),
                 IconButton(
                   icon: Icon(Icons.delete),
-                  color: Colors.white,
+                  color: Color(0xFF00ADB5),
                   onPressed: () {
                     _showDeleteConfirmation(context, food.foodId);
                   },
@@ -119,27 +142,44 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Create New Food'),
+          backgroundColor: Color(0xFF393E46),
+          title: Text('Create New Food', style: TextStyle(color: Color(0xFFEEEEEE))),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 TextField(
                   controller: _foodNameController,
-                  decoration: InputDecoration(labelText: 'Food Name'),
+                  decoration: InputDecoration(
+                    labelText: 'Food Name',
+                    labelStyle: TextStyle(color: Color(0xFFEEEEEE)),
+                  ),
+                  style: TextStyle(color: Color(0xFFEEEEEE)),
                 ),
                 TextField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
+                  decoration: InputDecoration(
+                    labelText: 'Description',
+                    labelStyle: TextStyle(color: Color(0xFFEEEEEE)),
+                  ),
+                  style: TextStyle(color: Color(0xFFEEEEEE)),
                 ),
                 TextField(
                   controller: _priceController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Price'),
+                  decoration: InputDecoration(
+                    labelText: 'Price',
+                    labelStyle: TextStyle(color: Color(0xFFEEEEEE)),
+                  ),
+                  style: TextStyle(color: Color(0xFFEEEEEE)),
                 ),
                 TextField(
                   controller: _caloriesController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Calories'),
+                  decoration: InputDecoration(
+                    labelText: 'Calories',
+                    labelStyle: TextStyle(color: Color(0xFFEEEEEE)),
+                  ),
+                  style: TextStyle(color: Color(0xFFEEEEEE)),
                 ),
                 FutureBuilder<List<Category>>(
                   future: _categoriesFuture,
@@ -150,23 +190,28 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
                     final categories = snapshot.data!;
                     return DropdownButton<int>(
                       value: _categoryId,
+                      dropdownColor: Color(0xFF393E46),
                       items: categories.map((Category category) {
                         return DropdownMenuItem<int>(
                           value: category.categoryId,
-                          child: Text(category.categoryName),
+                          child: Text(
+                            category.categoryName,
+                            style: TextStyle(color: Color(0xFFEEEEEE)),
+                          ),
                         );
                       }).toList(),
                       onChanged: (val) {
                         setState(() {
-                          _categoryId = val ?? 1; // Update selected category
+                          _categoryId = val ?? 1;
                         });
                       },
                     );
                   },
                 ),
                 SwitchListTile(
-                  title: Text('Available'),
+                  title: Text('Available', style: TextStyle(color: Color(0xFFEEEEEE))),
                   value: _available,
+                  activeColor: Color(0xFF00ADB5),
                   onChanged: (val) {
                     setState(() {
                       _available = val;
@@ -181,12 +226,12 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: Text('Cancel', style: TextStyle(color: Color(0xFF00ADB5))),
             ),
             TextButton(
               onPressed: () async {
                 final newFood = Food(
-                  foodId: 0, // New food doesn't have an ID yet
+                  foodId: 0,
                   foodName: _foodNameController.text,
                   description: _descriptionController.text,
                   imageBase64: '', // Add image handling logic if needed
@@ -209,7 +254,7 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
                 Navigator.of(context).pop(); // Close popup
                 _refreshMenu(); // Refresh the menu after creation
               },
-              child: Text('Create'),
+              child: Text('Create', style: TextStyle(color: Color(0xFF00ADB5))),
             ),
           ],
         );
@@ -219,7 +264,7 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
 
   void _refreshMenu() {
     setState(() {
-      _foodsFuture = _foodService.fetchMenu(); // Refresh the food menu
+      _foodsFuture = _foodService.fetchMenu();
     });
   }
 
@@ -228,34 +273,51 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
     final _descriptionController = TextEditingController(text: food.description);
     final _priceController = TextEditingController(text: food.price.toString());
     final _caloriesController = TextEditingController(text: food.calories.toString());
-    int _categoryId = food.categoryId; // Use the food's current category
+    int _categoryId = food.categoryId;
     bool _available = food.available == 1;
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Edit Food'),
+          backgroundColor: Color(0xFF393E46),
+          title: Text('Edit Food', style: TextStyle(color: Color(0xFFEEEEEE))),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 TextField(
                   controller: _foodNameController,
-                  decoration: InputDecoration(labelText: 'Food Name'),
+                  decoration: InputDecoration(
+                    labelText: 'Food Name',
+                    labelStyle: TextStyle(color: Color(0xFFEEEEEE)),
+                  ),
+                  style: TextStyle(color: Color(0xFFEEEEEE)),
                 ),
                 TextField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
+                  decoration: InputDecoration(
+                    labelText: 'Description',
+                    labelStyle: TextStyle(color: Color(0xFFEEEEEE)),
+                  ),
+                  style: TextStyle(color: Color(0xFFEEEEEE)),
                 ),
                 TextField(
                   controller: _priceController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Price'),
+                  decoration: InputDecoration(
+                    labelText: 'Price',
+                    labelStyle: TextStyle(color: Color(0xFFEEEEEE)),
+                  ),
+                  style: TextStyle(color: Color(0xFFEEEEEE)),
                 ),
                 TextField(
                   controller: _caloriesController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(labelText: 'Calories'),
+                  decoration: InputDecoration(
+                    labelText: 'Calories',
+                    labelStyle: TextStyle(color: Color(0xFFEEEEEE)),
+                  ),
+                  style: TextStyle(color: Color(0xFFEEEEEE)),
                 ),
                 FutureBuilder<List<Category>>(
                   future: _categoriesFuture,
@@ -266,23 +328,28 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
                     final categories = snapshot.data!;
                     return DropdownButton<int>(
                       value: _categoryId,
+                      dropdownColor: Color(0xFF393E46),
                       items: categories.map((Category category) {
                         return DropdownMenuItem<int>(
                           value: category.categoryId,
-                          child: Text(category.categoryName),
+                          child: Text(
+                            category.categoryName,
+                            style: TextStyle(color: Color(0xFFEEEEEE)),
+                          ),
                         );
                       }).toList(),
                       onChanged: (val) {
                         setState(() {
-                          _categoryId = val ?? food.categoryId; // Update selected category
+                          _categoryId = val ?? food.categoryId;
                         });
                       },
                     );
                   },
                 ),
                 SwitchListTile(
-                  title: Text('Available'),
+                  title: Text('Available', style: TextStyle(color: Color(0xFFEEEEEE))),
                   value: _available,
+                  activeColor: Color(0xFF00ADB5),
                   onChanged: (val) {
                     setState(() {
                       _available = val;
@@ -297,33 +364,35 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: Text('Cancel', style: TextStyle(color: Color(0xFF00ADB5))),
             ),
             TextButton(
               onPressed: () async {
-                final updatedFood = Food(
-                  foodId: food.foodId,
-                  foodName: _foodNameController.text,
-                  description: _descriptionController.text,
-                  imageBase64: food.imageBase64,
-                  price: int.parse(_priceController.text),
-                  available: _available ? 1 : 0,
-                  calories: int.parse(_caloriesController.text),
-                  categoryId: _categoryId,
-                );
-                await _foodService.updateFood(
-                  updatedFood.foodName,
-                  updatedFood.foodId,
-                  updatedFood.imageBase64,
-                  updatedFood.description,
-                  updatedFood.price,
-                  updatedFood.calories,
-                  updatedFood.categoryId,
-                );
-                Navigator.of(context).pop();
-                _refreshMenu(); // Refresh the menu after editing
-              },
-              child: Text('Save'),
+              final updatedFood = Food(
+                foodId: food.foodId,
+                foodName: _foodNameController.text,
+                description: _descriptionController.text,
+                imageBase64: food.imageBase64,
+                price: int.parse(_priceController.text),
+                available: _available ? 1 : 0,
+                calories: int.parse(_caloriesController.text),
+                categoryId: _categoryId,
+              );
+
+              await _foodService.updateFood(
+                updatedFood.foodName,
+                updatedFood.foodId,
+                updatedFood.imageBase64,
+                updatedFood.description,
+                updatedFood.price,
+                updatedFood.calories,
+                updatedFood.categoryId,
+              );
+
+              Navigator.of(context).pop(); // Close popup
+              _refreshMenu(); // Refresh the menu after update
+            },
+              child: Text('Save', style: TextStyle(color: Color(0xFF00ADB5))),
             ),
           ],
         );
@@ -336,14 +405,15 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Delete Confirmation'),
-          content: Text('Are you sure you want to delete this food item?'),
+          backgroundColor: Color(0xFF393E46),
+          title: Text('Delete Food', style: TextStyle(color: Color(0xFFEEEEEE))),
+          content: Text('Are you sure you want to delete this food?', style: TextStyle(color: Color(0xFFEEEEEE))),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: Text('Cancel', style: TextStyle(color: Color(0xFF00ADB5))),
             ),
             TextButton(
               onPressed: () async {
@@ -351,7 +421,7 @@ class _FoodManagementScreenState extends State<FoodManagementScreen> {
                 Navigator.of(context).pop();
                 _refreshMenu(); // Refresh the menu after deletion
               },
-              child: Text('Delete'),
+              child: Text('Delete', style: TextStyle(color: Color(0xFF00ADB5))),
             ),
           ],
         );
