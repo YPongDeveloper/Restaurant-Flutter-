@@ -85,9 +85,11 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Food> filterMenuByCategory(List<Food> menu) {
     // If selectedCategoryId is 0 (All), return all items
     if (selectedCategoryId == null || selectedCategoryId == 0) {
-      return menu;
+
+      return menu.where((food) => food.available != 2).toList();;
     } else {
-      return menu.where((food) => food.categoryId == selectedCategoryId).toList();
+      menu.where((food) => food.available != 2).toList();
+      return menu.where((food) => food.categoryId == selectedCategoryId && food.available != 2).toList();
     }
   }
   void _showOrderDialog() {
@@ -287,6 +289,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: Text('Orders'),
                 onTap: () {
                   Navigator.pushNamed(context, '/orders');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.shopping_bag, color: Colors.grey), // เปลี่ยนสีเป็นสีส้ม
+                title: Text('Management'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/management');
                 },
               ),
             ],
