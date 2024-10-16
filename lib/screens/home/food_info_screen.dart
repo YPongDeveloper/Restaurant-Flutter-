@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../../models/food_info_model.dart';
 import '../../models/food_model.dart';
@@ -53,17 +55,20 @@ class _FoodInfoScreenState extends State<FoodInfoScreen> {
                 children: [
                   // Food Image
                   Center(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width*0.8, // ใช้ขนาดหน้าจอที่ยืดหดได้
+                    child:Container(
+                      width: MediaQuery.of(context).size.width * 0.8, // ใช้ขนาดหน้าจอที่ยืดหดได้
                       height: MediaQuery.of(context).size.height * 0.4, // สูงเท่ากับ 40% ของความสูงหน้าจอ
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         image: DecorationImage(
-                          image: AssetImage('lib/assets/${food.foodName}.jpg'), // สมมติว่า foodName สอดคล้องกับชื่อรูป
+                          image: (food.imageBase64 != null && food.imageBase64.isNotEmpty)
+                              ? MemoryImage(base64Decode(food.imageBase64)) // แสดงรูปจาก Base64
+                              : AssetImage('lib/assets/food.png') as ImageProvider, // ถ้าไม่มีรูป Base64 ให้แสดงรูปภาพจาก Asset
                           fit: BoxFit.cover, // ปรับขนาดรูปภาพให้ครอบคลุมพื้นที่ทั้งหมด
                         ),
                       ),
                     ),
+
                   ),
                   SizedBox(height: 20),
                   Center(

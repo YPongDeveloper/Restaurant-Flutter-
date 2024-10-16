@@ -35,7 +35,7 @@ class MenuService {
   }
 
   // Update food details
-  Future<void> updateFood(String foodName, int foodId, String imageBase64, String description, int price, int calorie, int categoryId) async {
+  Future<void> updateFood(String foodName, int foodId, String imageBase64, String description,int available, int price, int calorie, int categoryId) async {
     final response = await http.put(
       Uri.parse('${ApiConstants.foodAPI}/edit/$foodId'),
       headers: {'Content-Type': 'application/json'},
@@ -43,6 +43,7 @@ class MenuService {
         'food_name': foodName,
         'image_base64': imageBase64,
         'description': description,
+        'available':available,
         'price': price,
         'calories': calorie,
         'category_id': categoryId,
@@ -96,6 +97,35 @@ class MenuService {
       return categories;
     } else {
       throw Exception('Failed to load categories');
+    }
+  }
+  Future<void> createCategory(String categoryName, String imageCategory) async {
+    final response = await http.post(
+      Uri.parse('${ApiConstants.foodAPI}/create/category'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'category_name': categoryName,
+        'image_category': imageCategory,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to create category');
+    }
+  }
+
+  Future<void> editCategory(int categoryId, String categoryName, String imageCategory) async {
+    final response = await http.put(
+      Uri.parse('${ApiConstants.foodAPI}/category/edit/$categoryId'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'category_name': categoryName,
+        'image_category': imageCategory,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to edit category');
     }
   }
 }

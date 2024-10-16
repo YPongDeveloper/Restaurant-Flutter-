@@ -29,19 +29,20 @@ class _FoodCardState extends State<FoodCard> {
   void initState() {
     super.initState();
     if (widget.food.imageBase64 != null && widget.food.imageBase64!.isNotEmpty) {
-      // แปลง Base64 เป็น Uint8List เมื่อเริ่มต้น
+      // Convert Base64 to Uint8List when initializing
       imageBytes = base64Decode(widget.food.imageBase64!);
-    }else{
-
+    } else {
       _loadDefaultImage();
     }
   }
+
   Future<void> _loadDefaultImage() async {
     final byteData = await rootBundle.load('lib/assets/food.png');
     setState(() {
       imageBytes = byteData.buffer.asUint8List();
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -51,7 +52,7 @@ class _FoodCardState extends State<FoodCard> {
         child: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: MemoryImage(imageBytes), // ใช้ MemoryImage
+              image: MemoryImage(imageBytes),
               fit: BoxFit.cover,
               colorFilter: ColorFilter.mode(
                 Colors.black.withOpacity(0.4),
@@ -88,57 +89,67 @@ class _FoodCardState extends State<FoodCard> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Decrement button
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      onPressed: () {
-                        widget.decrementOrder();
-                        setState(() {}); // Update the state
-                      },
-                      icon: const Icon(Icons.remove),
-                      color: Colors.white,
-                    ),
-                  ),
-                  // Display order count
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    width: 45,
-                    child: Center(
-                      child: Text(
-                        '${widget.orderCount}',
-                        style: const TextStyle(fontSize: 16, color: Colors.black),
+                  if (widget.food.available == 0) // Display 'Unavailable' if not available
+                    const Text(
+                      'Unavailable',
+                      style: TextStyle(
+                        color: Colors.redAccent,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  // Increment button
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      onPressed: () {
-                        widget.incrementOrder();
-                        setState(() {}); // Update the state
-                      },
-                      icon: const Icon(Icons.add),
-                      color: Colors.white,
-                    ),
-                  ),
                 ],
               ),
+              if (widget.food.available == 1) // Show buttons only if the food is available
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Decrement button
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          widget.decrementOrder();
+                          setState(() {}); // Update the state
+                        },
+                        icon: const Icon(Icons.remove),
+                        color: Colors.white,
+                      ),
+                    ),
+                    // Display order count
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      width: 45,
+                      child: Center(
+                        child: Text(
+                          '${widget.orderCount}',
+                          style: const TextStyle(fontSize: 16, color: Colors.black),
+                        ),
+                      ),
+                    ),
+                    // Increment button
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          widget.incrementOrder();
+                          setState(() {}); // Update the state
+                        },
+                        icon: const Icon(Icons.add),
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),

@@ -65,6 +65,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 Navigator.pushNamed(context, '/orders');
               },
             ),
+            ListTile(
+              leading: Icon(Icons.shopping_bag, color: Colors.grey), // เปลี่ยนสีเป็นสีส้ม
+              title: Text('Management'),
+              onTap: () {
+                Navigator.pushNamed(context, '/management');
+              },
+            ),
           ],
         ),
       ),

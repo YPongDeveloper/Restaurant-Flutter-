@@ -1,26 +1,20 @@
 class Category {
   final int categoryId;
   final String categoryName;
+  final String imageCategory;
 
-  // Constructor
   Category({
     required this.categoryId,
     required this.categoryName,
+    required this.imageCategory,
   });
 
-  // Method to create Category from JSON
+  // ฟังก์ชันสำหรับแปลง JSON เป็น Category object
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
       categoryId: json['category_id'],
       categoryName: json['category_name'],
+      imageCategory: json['image_category'],
     );
-  }
-
-  // Method to convert Category to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'category_id': categoryId,
-      'category_name': categoryName,
-    };
   }
 }

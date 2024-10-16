@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-
 import '../../models/category_model.dart';
+import '../../services/menu_service.dart';
 
-class CategoryManagementScreen extends StatelessWidget {
-  Future<List<Category>> fetchCategories() async {
-    // Implement API fetching logic (GET http://localhost:8080/food/categorys)
-    return [];
-  }
+class CategoryManagementScreen extends StatefulWidget {
+  @override
+  _CategoryManagementScreenState createState() => _CategoryManagementScreenState();
+}
+
+class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
+  final MenuService _menuService = MenuService();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +27,7 @@ class CategoryManagementScreen extends StatelessWidget {
         ],
       ),
       body: FutureBuilder<List<Category>>(
-        future: fetchCategories(),
+        future: _menuService.fetchCategories(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
@@ -35,6 +39,9 @@ class CategoryManagementScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final category = categories[index];
               return ListTile(
+                leading: category.imageCategory.isNotEmpty
+                    ? Image.memory(base64Decode(category.imageCategory), width: 50, height: 50, fit: BoxFit.cover)
+                    : Image.asset('lib/assets/categoryIcon.png', width: 50, height: 50),
                 title: Text(category.categoryName),
                 trailing: IconButton(
                   icon: Icon(Icons.edit),
@@ -43,7 +50,7 @@ class CategoryManagementScreen extends StatelessWidget {
                   },
                 ),
                 onTap: () {
-                  // Navigate to list menu in this category (GET http://localhost:8080/food/category/:categoryId)
+                  // Navigate to list menu in this category
                 },
               );
             },
@@ -54,11 +61,91 @@ class CategoryManagementScreen extends StatelessWidget {
   }
 
   void _showCreateCategoryPopup(BuildContext context) {
-    // Show popup to create new category (POST http://localhost:8080/food/create/category)
+    final _categoryNameController = TextEditingController();
+    final _imageCategoryController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Create Category'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _categoryNameController,
+              decoration: InputDecoration(labelText: 'Category Name'),
+            ),
+            TextField(
+              controller: _imageCategoryController,
+              decoration: InputDecoration(labelText: 'Image URL'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // ยกเลิก
+            },
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await _menuService.createCategory(
+                _categoryNameController.text,
+                _imageCategoryController.text,
+              );
+              Navigator.of(context).pop();
+              setState(() {}); // รีเฟรชหน้า
+            },
+            child: Text('Create'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showEditCategoryPopup(BuildContext context, Category category) {
-    // Show popup to edit category name (PUT http://localhost:8080/food/edit/:categoryId)
+    final _categoryNameController = TextEditingController(text: category.categoryName);
+    final _imageCategoryController = TextEditingController(text: category.imageCategory);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Edit Category'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _categoryNameController,
+              decoration: InputDecoration(labelText: 'Category Name'),
+            ),
+            TextField(
+              controller: _imageCategoryController,
+              decoration: InputDecoration(labelText: 'Image URL'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // ยกเลิก
+            },
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await _menuService.editCategory(
+                category.categoryId,
+                _categoryNameController.text,
+                _imageCategoryController.text,
+              );
+              Navigator.of(context).pop();
+              setState(() {}); // รีเฟรชหน้า
+            },
+            child: Text('Edit'),
+          ),
+        ],
+      ),
+    );
   }
 }
-

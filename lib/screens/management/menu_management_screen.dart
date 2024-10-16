@@ -10,6 +10,54 @@ class MenuManagementScreen extends StatelessWidget {
         title: Text('Menu Management'),
         backgroundColor: Color(0xFFFF9494), // AppBar color
       ),
+      drawer: Drawer(
+        backgroundColor: Colors.blue[50],
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Management',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home, color: Colors.red), // เปลี่ยนสีเป็นสีแดง
+              title: Text('Home'),
+              onTap: () {
+                Navigator.pushNamed(context, '/home');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person, color: Colors.green), // เปลี่ยนสีเป็นสีเขียว
+              title: Text('Employees'),
+              onTap: () {
+                Navigator.pushNamed(context, '/employees');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_bag, color: Colors.orange), // เปลี่ยนสีเป็นสีส้ม
+              title: Text('Orders'),
+              onTap: () {
+                Navigator.pushNamed(context, '/orders');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_bag, color: Colors.grey), // เปลี่ยนสีเป็นสีส้ม
+              title: Text('Management',style: TextStyle(color: Colors.red),),
+              onTap: () {
+                Navigator.pushNamed(context, '/management');
+              },
+            ),
+          ],
+        ),
+      ),
       body: Container(
         color: Color(0xFFFFF5E4), // Body background color
         padding: const EdgeInsets.all(16.0),
