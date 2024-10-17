@@ -354,8 +354,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           child: Column(
                             children: [
-                              Image(
+                              category.imageCategory.isNotEmpty
+                                  ? Image(
                                 image: MemoryImage(base64Decode(category.imageCategory)),
+                                width: 40,
+                                height: 40,
+                                fit: BoxFit.fill,
+                              )
+                                  : Image(
+                                image: AssetImage('lib/assets/categoryIcon.png'),
                                 width: 40,
                                 height: 40,
                                 fit: BoxFit.fill,
