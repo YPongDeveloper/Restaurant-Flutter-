@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/order_model.dart';
-import '../services/order_service.dart';
+import '../../models/order_model.dart';
+import '../../services/order_service.dart';
 
 class EmployeeInfoScreen extends StatefulWidget {
   final int employeeId; // Pass employeeId from the previous screen

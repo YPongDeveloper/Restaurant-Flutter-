@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../screens/employee_screen.dart';
+import '../screens/employee/employee_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/management/menu_management_screen.dart';
-import '../screens/order_screen.dart';
+import '../screens/order/order_screen.dart';
 
 class AppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {

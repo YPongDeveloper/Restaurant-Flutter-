@@ -80,4 +80,19 @@ class OrderService {
       throw Exception('Failed to load orders');
     }
   }
+  Future<void> updateNewOrder(int orderId, List<OrderListRequest> orderList) async {
+    final response = await http.put(
+      Uri.parse('${ApiConstants.orderAPI}/update/$orderId'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(orderList.map((order) => order.toJson()).toList()),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update order');
+    } else {
+      print('Order updated successfully: ${response.body}');
+    }
+  }
 }

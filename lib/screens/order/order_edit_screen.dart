@@ -1,52 +1,44 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../models/food_model.dart';
 import '../../../services/menu_service.dart';
-import '../../../widgets/food_card.dart'; // Import the FoodCard widget
+import '../../../widgets/food_card_edit_order.dart'; // Import the FoodCard widget
 import '../../../models/order_list_request_model.dart'; // Import the OrderRequest model
 import '../../../services/order_service.dart';
 import '../../models/category_model.dart';
-import 'food_info_screen.dart'; // Import OrderService
+import '../../models/order_list_response.dart';
+import 'food_info_screen.dart';
+import 'order_screen.dart'; // Import OrderService
 
-class HomeScreen extends StatefulWidget {
+class OrderEditScreen extends StatefulWidget {
+  final int orderId;
+  final List<OrderListResponse> orderList; // Replace OrderListItem with your actual model
+
+  OrderEditScreen({required this.orderId, required this.orderList});
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _OrderEditScreenState createState() => _OrderEditScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _OrderEditScreenState extends State<OrderEditScreen> {
   late Future<List<Food>> futureMenu;
   late Future<List<Category>> futureCategory;
   Map<int, int> orderCount = {};
-  final TextEditingController _customerCountController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   int? selectedCategoryId;
   List<Category> categories = [];
-  // final List<Map<String, dynamic>> categories = [
-  //   {"category_id": 0, "category_name": "All"}, // Add All category
-  //   {"category_id": 1, "category_name": "Lasagne"},
-  //   {"category_id": 2, "category_name": "Desserts"},
-  //   {"category_id": 3, "category_name": "Beverages"},
-  //   {"category_id": 4, "category_name": "Salads"},
-  //   {"category_id": 5, "category_name": "Soups"},
-  //   {"category_id": 6, "category_name": "Pasta"},
-  //   {"category_id": 7, "category_name": "Pizza"},
-  //   {"category_id": 8, "category_name": "Burgers"},
-  //   {"category_id": 9, "category_name": "Sandwiches"},
-  //   {"category_id": 10, "category_name": "Steaks"},
-  //   {"category_id": 11, "category_name": "Breakfast"},
-  //   {"category_id": 12, "category_name": "Noodles"},
-  //   {"category_id": 13, "category_name": "Sushi"},
-  //   {"category_id": 14, "category_name": "Curry"},
-  // ];
 
   @override
   void initState() {
     super.initState();
     _loadCategories();
+    for (var order in widget.orderList) {
+      orderCount[order.foodId] = order.quantity; // Set the initial quantity
+    }
     futureMenu = MenuService().fetchMenu();
   }
+
   Future<void> _loadCategories() async {
     String categoryIcon = await getBase64Image();
     Category all = Category(categoryId: 0, categoryName: "All", imageCategory: categoryIcon);
@@ -57,11 +49,13 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
   }
+
   Future<String> getBase64Image() async {
     ByteData bytes = await rootBundle.load('lib/assets/categoryIcon.png');
     List<int> imageBytes = bytes.buffer.asUint8List();
     return base64Encode(imageBytes);
   }
+
   void incrementOrder(int foodId) {
     setState(() {
       orderCount[foodId] = (orderCount[foodId] ?? 0) + 1;
@@ -85,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _scrollRight() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
-        _scrollController.offset + 240, // Adjust the scroll distance as needed
+        _scrollController.offset + 240,
         duration: Duration(milliseconds: 900),
         curve: Curves.easeInOut,
       );
@@ -95,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _scrollLeft() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
-        _scrollController.offset - 240, // Adjust the scroll distance as needed
+        _scrollController.offset - 240,
         duration: Duration(milliseconds: 900),
         curve: Curves.easeInOut,
       );
@@ -103,15 +97,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Food> filterMenuByCategory(List<Food> menu) {
-    // If selectedCategoryId is 0 (All), return all items
     if (selectedCategoryId == null || selectedCategoryId == 0) {
-
-      return menu.where((food) => food.available != 2).toList();;
+      return menu.where((food) => food.available != 2).toList();
     } else {
-      menu.where((food) => food.available != 2).toList();
       return menu.where((food) => food.categoryId == selectedCategoryId && food.available != 2).toList();
     }
   }
+
   void _showOrderDialog() {
     showDialog(
       context: context,
@@ -137,7 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             } else if (snapshot.hasData) {
               List<Food> menu = snapshot.data!;
-
               List<Widget> orderDetails = orderCount.entries
                   .where((entry) => entry.value > 0)
                   .map((entry) {
@@ -158,24 +149,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
 
-                return Text('${orderedFood.foodName}: $quantity');
+                return Text('${orderedFood.foodName} : $quantity');
               }).toList();
 
               return AlertDialog(
-                title: Text('Order Summary'),
+                title: Text('Order Update Summary'),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextField(
-                      controller: _customerCountController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Number of Customers',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Text('Your Order:'),
+                    Text('Your New Order:'),
                     ...orderDetails,
                   ],
                 ),
@@ -183,22 +165,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: Colors.red),
                     onPressed: () {
-                      _customerCountController.clear();
                       Navigator.of(context).pop();
                     },
-                    child: Text('Cancel'),
+                    child: Text('Cancel',style: TextStyle(color: Colors.white),),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: Colors.green),
                     onPressed: () async {
-                      String customerCount = _customerCountController.text;
-
-                      if (customerCount.isEmpty || int.tryParse(customerCount) == null || int.parse(customerCount) < 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please enter a valid number of customers.')),
-                        );
-                        return;
-                      }
 
                       List<OrderListRequest> orderList = orderCount.entries
                           .where((entry) => entry.value > 0)
@@ -208,28 +181,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       ))
                           .toList();
 
-                      OrderRequest orderRequest = OrderRequest(
-                        number: int.parse(customerCount),
-                        orderList: orderList,
-                      );
-
                       try {
-                        await OrderService().createOrder(orderRequest);
+                        await OrderService().updateNewOrder(widget.orderId,orderList);
 
                         setState(() {
                           orderCount.clear();
-                          _customerCountController.clear();
                           futureMenu = MenuService().fetchMenu();
                         });
 
-                        Navigator.of(context).pop();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => OrdersScreen()),
+                        );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Failed to create order: $e')),
                         );
                       }
                     },
-                    child: Text('Submit'),
+                    child: Text('Submit',style: TextStyle(color: Colors.white),),
                   ),
                 ],
               );
@@ -250,85 +220,32 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-  // ... (rest of your existing code)
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.green[100],
-        appBar: AppBar(
-          backgroundColor: Color(0xff6fbb0f),
-          title: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('Pir Restaurant'),
-          ),
-          actions: [
-            Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30), color: Colors.yellow[200]),
-              child: IconButton(
-                icon: Icon(Icons.shopping_cart),
-                onPressed: _showOrderDialog,
-              ),
+      backgroundColor: Colors.green[100],
+      appBar: AppBar(
+        backgroundColor: Color(0xff6fbb0f),
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('Update Order List'),
+        ),
+        actions: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: Colors.yellow[200],
             ),
-          ],
-        ),
-        drawer: Drawer(
-          backgroundColor: Colors.blue[50],
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text(
-                  'Home',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.home, color: Colors.red), // เปลี่ยนสีเป็นสีแดง
-                title: Text('Home',style: TextStyle(color: Colors.red),),
-                onTap: () {
-                  Navigator.pushNamed(context, '/home');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.person, color: Colors.green), // เปลี่ยนสีเป็นสีเขียว
-                title: Text('Employees'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/employees');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.shopping_bag, color: Colors.orange), // เปลี่ยนสีเป็นสีส้ม
-                title: Text('Orders'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/orders');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.shopping_bag, color: Colors.grey), // เปลี่ยนสีเป็นสีส้ม
-                title: Text('Management'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/management');
-                },
-              ),
-            ],
+            child: IconButton(
+              icon: Icon(Icons.update),
+              onPressed: _showOrderDialog,
+            ),
           ),
-        ),
-        body: LayoutBuilder(
-        builder: (context, constraints) {
-      double screenWidth = constraints.maxWidth;
-      int itemsPerRow = screenWidth > 600 ? 3 : 2;
-
-      return Column(
+        ],
+      ),
+      body: Column(
         children: [
-          // Horizontal category filter
           Container(
             height: 80,
             padding: EdgeInsets.symmetric(vertical: 8),
@@ -404,44 +321,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Failed to load menu: ${snapshot.error}'));
+                  return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No food items available.'));
+                  return Center(child: Text('No food available.'));
+                } else {
+                  List<Food> filteredMenu = filterMenuByCategory(snapshot.data!);
+                  return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.8,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                    ),
+                    itemCount: filteredMenu.length,
+                    itemBuilder: (context, index) {
+                      return FoodCard(
+                        food: filteredMenu[index],
+                        onIncrement: incrementOrder,
+                        onDecrement: decrementOrder,
+                        currentCount: orderCount[filteredMenu[index].foodId] ?? 0,
+                      );
+                    },
+                  );
                 }
-
-                // Filter menu based on selected category
-                List<Food> filteredMenu = filterMenuByCategory(snapshot.data!);
-
-                return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: itemsPerRow,
-                    childAspectRatio: 0.8,
-                  ),
-                  itemCount: filteredMenu.length,
-                  itemBuilder: (context, index) {
-                    final food = filteredMenu[index];
-                    return InkWell(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => FoodInfoScreen(foodId: food.foodId),
-                        ));
-                      },
-                      child: FoodCard(
-                        food: food,
-                        orderCount: orderCount[food.foodId] ?? 0,
-                        incrementOrder: () => incrementOrder(food.foodId),
-                        decrementOrder: () => decrementOrder(food.foodId),
-                      ),
-                    );
-                  },
-                );
               },
             ),
           ),
         ],
-      );
-        },
-        ),
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/employee_service.dart';
-import '../models/employee_model.dart';
-import '../widgets/employee_item_widget.dart';
+import '../../services/employee_service.dart';
+import '../../models/employee_model.dart';
+import '../../widgets/employee_item_widget.dart';
 import 'employee_info_screen.dart';
 
 class EmployeeScreen extends StatefulWidget {

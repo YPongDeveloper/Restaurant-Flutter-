@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '/models/order_model.dart';
-import '../../services/order_service.dart';
-import '../../widgets/order_detail_dialog.dart';
+import '../../../services/order_service.dart';
+import '../../../widgets/order_detail_dialog.dart';
 
 class OrdersScreen extends StatefulWidget {
   @override
@@ -104,8 +104,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         child: Text('All', style: TextStyle(color: Colors.blue)),
                       ),
                       DropdownMenuItem(
+                        value: 0,
+                        child: Text('Online Waiting', style: TextStyle(color: Colors.pink)),
+                      ),
+                      DropdownMenuItem(
                         value: 1,
-                        child: Text('Waiting', style: TextStyle(color: Colors.orange)),
+                        child: Text('Onsite Waiting', style: TextStyle(color: Colors.orange)),
                       ),
                       DropdownMenuItem(
                         value: 2,
@@ -195,8 +199,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   String getStatusText(int status) {
     switch (status) {
+      case 0:
+        return 'Online Waiting';
       case 1:
-        return 'Waiting';
+        return 'Onsite Waiting';
       case 2:
         return 'Eating';
       case 4:

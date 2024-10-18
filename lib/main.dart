@@ -1,7 +1,7 @@
 import 'package:employee/routes/app_routes.dart';
-import 'package:employee/screens/order_screen.dart';
+import 'package:employee/screens/order/order_screen.dart';
 import 'package:flutter/material.dart';
-import 'screens/employee_screen.dart';
+import 'screens/employee/employee_screen.dart';
 import 'screens/home/home_screen.dart';
 void main() {
   runApp(MyApp());

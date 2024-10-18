@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/order_response_model.dart';
+import '../screens/order/order_edit_screen.dart';
 import '../services/order_service.dart';
 
 class OrderDetailDialog extends StatefulWidget {
@@ -69,9 +70,25 @@ class _OrderDetailDialogState extends State<OrderDetailDialog> {
             ),
           ),
           actions: [
+            if (order.status == 0 || order.status == 1)
+              TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OrderEditScreen(
+                      orderId: order.orderId,
+                      orderList: order.orderList, // Pass the order list here
+                    ),
+                  ),
+                );
+              },
+              child: Text('Edit Order'),
+            ),
+
             TextButton(
               onPressed: () {
-                  _showEditStatusDialog(order.status);
+                _showEditStatusDialog(order.status);
               },
               child: Text('Edit Status'),
             ),
@@ -87,8 +104,10 @@ class _OrderDetailDialogState extends State<OrderDetailDialog> {
 
   String getStatusText(int status) {
     switch (status) {
+      case 0:
+        return 'Online Waiting';
       case 1:
-        return 'Waiting';
+        return 'Onsite Waiting';
       case 2:
         return 'Eating';
       case 4:
@@ -114,7 +133,8 @@ class _OrderDetailDialogState extends State<OrderDetailDialog> {
                   DropdownButtonFormField<int>(
                     value: selectedStatus ?? currentStatus,
                     items: [
-                      DropdownMenuItem(child: Text('Wait',style: TextStyle(color: Colors.red[400]),), value: 1),
+                      DropdownMenuItem(child: Text('Online Wait',style: TextStyle(color: Colors.red[400]),), value: 0),
+                      DropdownMenuItem(child: Text('Onsite Wait',style: TextStyle(color: Colors.red[400]),), value: 1),
                       DropdownMenuItem(child: Text('Eating'), value: 2),
                       DropdownMenuItem(child: Text('Paid'), value: 4),
                       DropdownMenuItem(child: Text('Cancel'), value: 3),
@@ -149,7 +169,7 @@ class _OrderDetailDialogState extends State<OrderDetailDialog> {
               actions: [
                 TextButton(
                   onPressed: () async {
-                    if (selectedStatus != null && selectedStatus != currentStatus && selectedStatus !=1) {
+                    if (selectedStatus != null && selectedStatus != currentStatus && selectedStatus !=1&& selectedStatus !=0) {
                       try {
                         // Call updateOrderStatus with the selected status and review if applicable
                         await OrderService().updateOrderStatus(widget.orderId, selectedStatus!, review);
