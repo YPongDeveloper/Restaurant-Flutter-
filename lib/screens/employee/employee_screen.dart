@@ -264,6 +264,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                 Navigator.pushNamed(context, '/management');
               },
             ),
+            ListTile(
+              leading: Icon(Icons.queue, color: Colors.pink), // เปลี่ยนสีเป็นสีส้ม
+              title: Text('Queue'),
+              onTap: () {
+                Navigator.pushNamed(context, '/queueScreen');
+              },
+            ),
           ],
         ),
       ),

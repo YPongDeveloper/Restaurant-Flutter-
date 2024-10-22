@@ -3,6 +3,7 @@ import '../screens/employee/employee_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/management/menu_management_screen.dart';
 import '../screens/order/order_screen.dart';
+import '../screens/queue/queue_screen.dart';
 
 class AppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -15,6 +16,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => OrdersScreen());
       case '/management':
         return MaterialPageRoute(builder: (_) => MenuManagementScreen());
+      case '/queueScreen':
+        return MaterialPageRoute(builder: (_) => QueueScreen());
       default:
         return MaterialPageRoute(builder: (_) => HomeScreen());
     }

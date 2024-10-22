@@ -7,11 +7,9 @@ import '../models/order_model.dart';
 import '../models/order_response_model.dart';
 
 class OrderService {
-  static const String _baseUrl = '${ApiConstants.orderAPI}/create';
-
   Future<void> createOrder(OrderRequest orderRequest) async {
     final response = await http.post(
-      Uri.parse(_baseUrl),
+      Uri.parse('${ApiConstants.orderAPI}/create'),
       headers: {
         'Content-Type': 'application/json',
       },
