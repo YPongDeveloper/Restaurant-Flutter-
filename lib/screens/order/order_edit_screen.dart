@@ -28,6 +28,8 @@ class _OrderEditScreenState extends State<OrderEditScreen> {
   final ScrollController _scrollController = ScrollController();
   int? selectedCategoryId;
   List<Category> categories = [];
+  final TextEditingController _searchController = TextEditingController();
+  String searchQuery = "";
 
   @override
   void initState() {
@@ -73,6 +75,7 @@ class _OrderEditScreenState extends State<OrderEditScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -96,14 +99,27 @@ class _OrderEditScreenState extends State<OrderEditScreen> {
     }
   }
 
-  List<Food> filterMenuByCategory(List<Food> menu) {
-    if (selectedCategoryId == null || selectedCategoryId == 0) {
-      return menu.where((food) => food.available != 2).toList();
-    } else {
-      return menu.where((food) => food.categoryId == selectedCategoryId && food.available != 2).toList();
-    }
-  }
+  List<Food> filterMenuByCategoryAndSearch(List<Food> menu) {
+    List<Food> filteredMenu =
+    menu.where((food) => food.available != 2).toList();
 
+    // Filter by category
+    if (selectedCategoryId != null && selectedCategoryId != 0) {
+      filteredMenu = filteredMenu
+          .where((food) => food.categoryId == selectedCategoryId)
+          .toList();
+    }
+
+    // Filter by search query
+    if (searchQuery.isNotEmpty) {
+      filteredMenu = filteredMenu
+          .where((food) =>
+          food.foodName.toLowerCase().contains(searchQuery.toLowerCase()))
+          .toList();
+    }
+
+    return filteredMenu;
+  }
   void _showOrderDialog() {
     showDialog(
       context: context,
@@ -314,6 +330,23 @@ class _OrderEditScreenState extends State<OrderEditScreen> {
               ],
             ),
           ),
+          SizedBox(height: 15,),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Search food...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value;
+                });
+              },
+            ),
+          ),
           Expanded(
             child: FutureBuilder<List<Food>>(
               future: futureMenu,
@@ -325,7 +358,7 @@ class _OrderEditScreenState extends State<OrderEditScreen> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('No food available.'));
                 } else {
-                  List<Food> filteredMenu = filterMenuByCategory(snapshot.data!);
+                  List<Food> filteredMenu = filterMenuByCategoryAndSearch(snapshot.data!);
                   return GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,

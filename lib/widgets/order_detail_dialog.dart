@@ -114,6 +114,8 @@ class _OrderDetailDialogState extends State<OrderDetailDialog> {
         return 'Paid';
       case 3:
         return 'Cancel';
+      case 5:
+        return 'In Queue';
       default:
         return 'Unknown';
     }
@@ -135,6 +137,7 @@ class _OrderDetailDialogState extends State<OrderDetailDialog> {
                     items: [
                       DropdownMenuItem(child: Text('Online Wait',style: TextStyle(color: Colors.red[400]),), value: 0),
                       DropdownMenuItem(child: Text('Onsite Wait',style: TextStyle(color: Colors.red[400]),), value: 1),
+                      DropdownMenuItem(child: Text('In Queue',style: TextStyle(color: Colors.red[400]),), value: 5),
                       DropdownMenuItem(child: Text('Eating'), value: 2),
                       DropdownMenuItem(child: Text('Paid'), value: 4),
                       DropdownMenuItem(child: Text('Cancel'), value: 3),
@@ -169,7 +172,7 @@ class _OrderDetailDialogState extends State<OrderDetailDialog> {
               actions: [
                 TextButton(
                   onPressed: () async {
-                    if (selectedStatus != null && selectedStatus != currentStatus && selectedStatus !=1&& selectedStatus !=0) {
+                    if (selectedStatus != null && selectedStatus != currentStatus && selectedStatus !=1 && selectedStatus !=0 && selectedStatus!= 5) {
                       try {
                         // Call updateOrderStatus with the selected status and review if applicable
                         await OrderService().updateOrderStatus(widget.orderId, selectedStatus!, review);

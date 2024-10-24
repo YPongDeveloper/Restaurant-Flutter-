@@ -23,23 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   int? selectedCategoryId;
   List<Category> categories = [];
-  // final List<Map<String, dynamic>> categories = [
-  //   {"category_id": 0, "category_name": "All"}, // Add All category
-  //   {"category_id": 1, "category_name": "Lasagne"},
-  //   {"category_id": 2, "category_name": "Desserts"},
-  //   {"category_id": 3, "category_name": "Beverages"},
-  //   {"category_id": 4, "category_name": "Salads"},
-  //   {"category_id": 5, "category_name": "Soups"},
-  //   {"category_id": 6, "category_name": "Pasta"},
-  //   {"category_id": 7, "category_name": "Pizza"},
-  //   {"category_id": 8, "category_name": "Burgers"},
-  //   {"category_id": 9, "category_name": "Sandwiches"},
-  //   {"category_id": 10, "category_name": "Steaks"},
-  //   {"category_id": 11, "category_name": "Breakfast"},
-  //   {"category_id": 12, "category_name": "Noodles"},
-  //   {"category_id": 13, "category_name": "Sushi"},
-  //   {"category_id": 14, "category_name": "Curry"},
-  // ];
+  final TextEditingController _searchController = TextEditingController();
+  String searchQuery = "";
 
   @override
   void initState() {
@@ -79,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -102,16 +88,28 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  List<Food> filterMenuByCategory(List<Food> menu) {
-    // If selectedCategoryId is 0 (All), return all items
-    if (selectedCategoryId == null || selectedCategoryId == 0) {
+  List<Food> filterMenuByCategoryAndSearch(List<Food> menu) {
+    List<Food> filteredMenu =
+    menu.where((food) => food.available != 2).toList();
 
-      return menu.where((food) => food.available != 2).toList();;
-    } else {
-      menu.where((food) => food.available != 2).toList();
-      return menu.where((food) => food.categoryId == selectedCategoryId && food.available != 2).toList();
+    // Filter by category
+    if (selectedCategoryId != null && selectedCategoryId != 0) {
+      filteredMenu = filteredMenu
+          .where((food) => food.categoryId == selectedCategoryId)
+          .toList();
     }
+
+    // Filter by search query
+    if (searchQuery.isNotEmpty) {
+      filteredMenu = filteredMenu
+          .where((food) =>
+          food.foodName.toLowerCase().contains(searchQuery.toLowerCase()))
+          .toList();
+    }
+
+    return filteredMenu;
   }
+
   void _showOrderDialog() {
     showDialog(
       context: context,
@@ -255,200 +253,217 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.green[100],
-        appBar: AppBar(
-          backgroundColor: Color(0xff6fbb0f),
-          title: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('Pir Restaurant'),
-          ),
-          actions: [
-            Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30), color: Colors.yellow[200]),
-              child: IconButton(
-                icon: Icon(Icons.shopping_cart),
-                onPressed: _showOrderDialog,
-              ),
-            ),
-          ],
+      backgroundColor: Colors.green[100],
+      appBar: AppBar(
+        backgroundColor: Color(0xff6fbb0f),
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('Pir Restaurant'),
         ),
-        drawer: Drawer(
-          backgroundColor: Colors.blue[50],
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text(
-                  'Home',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.home, color: Colors.red), // เปลี่ยนสีเป็นสีแดง
-                title: Text('Home',style: TextStyle(color: Colors.red),),
-                onTap: () {
-                  Navigator.pushNamed(context, '/home');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.person, color: Colors.green), // เปลี่ยนสีเป็นสีเขียว
-                title: Text('Employees'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/employees');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.shopping_bag, color: Colors.orange), // เปลี่ยนสีเป็นสีส้ม
-                title: Text('Orders'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/orders');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.shopping_bag, color: Colors.grey), // เปลี่ยนสีเป็นสีส้ม
-                title: Text('Management'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/management');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.queue, color: Colors.pink), // เปลี่ยนสีเป็นสีส้ม
-                title: Text('Queue'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/queueScreen');
-                },
-              ),
-            ],
-          ),
-        ),
-        body: LayoutBuilder(
-        builder: (context, constraints) {
-      double screenWidth = constraints.maxWidth;
-      int itemsPerRow = screenWidth > 600 ? 3 : 2;
-
-      return Column(
-        children: [
-          // Horizontal category filter
+        actions: [
           Container(
-            height: 80,
-            padding: EdgeInsets.symmetric(vertical: 8),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.chevron_left),
-                  onPressed: _scrollLeft,
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController, // Assign the controller
-                    scrollDirection: Axis.horizontal,
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      final category = categories[index];
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedCategoryId = category.categoryId;
-                          });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: selectedCategoryId == category.categoryId
-                                ? Colors.green
-                                : Colors.grey[200],
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Column(
-                            children: [
-                              category.imageCategory.isNotEmpty
-                                  ? Image(
-                                image: MemoryImage(base64Decode(category.imageCategory)),
-                                width: 40,
-                                height: 40,
-                                fit: BoxFit.fill,
-                              )
-                                  : Image(
-                                image: AssetImage('lib/assets/categoryIcon.png'),
-                                width: 40,
-                                height: 40,
-                                fit: BoxFit.fill,
-                              ),
-                              Text(
-                                category.categoryName,
-                                style: TextStyle(
-                                  color: selectedCategoryId == category.categoryId
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.chevron_right),
-                  onPressed: _scrollRight,
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: FutureBuilder<List<Food>>(
-              future: futureMenu,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Failed to load menu: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No food items available.'));
-                }
-
-                // Filter menu based on selected category
-                List<Food> filteredMenu = filterMenuByCategory(snapshot.data!);
-
-                return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: itemsPerRow,
-                    childAspectRatio: 0.8,
-                  ),
-                  itemCount: filteredMenu.length,
-                  itemBuilder: (context, index) {
-                    final food = filteredMenu[index];
-                    return InkWell(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => FoodInfoScreen(foodId: food.foodId),
-                        ));
-                      },
-                      child: FoodCard(
-                        food: food,
-                        orderCount: orderCount[food.foodId] ?? 0,
-                        incrementOrder: () => incrementOrder(food.foodId),
-                        decrementOrder: () => decrementOrder(food.foodId),
-                      ),
-                    );
-                  },
-                );
-              },
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30), color: Colors.yellow[200]),
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: _showOrderDialog,
             ),
           ),
         ],
-      );
-        },
+      ),
+      drawer: Drawer(
+        backgroundColor: Colors.blue[50],
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Home',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home, color: Colors.red), // เปลี่ยนสีเป็นสีแดง
+              title: Text('Home',style: TextStyle(color: Colors.red),),
+              onTap: () {
+                Navigator.pushNamed(context, '/home');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person, color: Colors.green), // เปลี่ยนสีเป็นสีเขียว
+              title: Text('Employees'),
+              onTap: () {
+                Navigator.pushNamed(context, '/employees');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_bag, color: Colors.orange), // เปลี่ยนสีเป็นสีส้ม
+              title: Text('Orders'),
+              onTap: () {
+                Navigator.pushNamed(context, '/orders');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_bag, color: Colors.grey), // เปลี่ยนสีเป็นสีส้ม
+              title: Text('Management'),
+              onTap: () {
+                Navigator.pushNamed(context, '/management');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.queue, color: Colors.pink), // เปลี่ยนสีเป็นสีส้ม
+              title: Text('Queue'),
+              onTap: () {
+                Navigator.pushNamed(context, '/queueScreen');
+              },
+            ),
+          ],
         ),
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double screenWidth = constraints.maxWidth;
+          int itemsPerRow = screenWidth > 600 ? 3 : 2;
+
+          return Column(
+            children: [
+              // Horizontal category filter
+              Container(
+                height: 80,
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.chevron_left),
+                      onPressed: _scrollLeft,
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _scrollController, // Assign the controller
+                        scrollDirection: Axis.horizontal,
+                        itemCount: categories.length,
+                        itemBuilder: (context, index) {
+                          final category = categories[index];
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedCategoryId = category.categoryId;
+                              });
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: selectedCategoryId == category.categoryId
+                                    ? Colors.green
+                                    : Colors.grey[200],
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Column(
+                                children: [
+                                  category.imageCategory.isNotEmpty
+                                      ? Image(
+                                    image: MemoryImage(base64Decode(category.imageCategory)),
+                                    width: 40,
+                                    height: 40,
+                                    fit: BoxFit.fill,
+                                  )
+                                      : Image(
+                                    image: AssetImage('lib/assets/categoryIcon.png'),
+                                    width: 40,
+                                    height: 40,
+                                    fit: BoxFit.fill,
+                                  ),
+                                  Text(
+                                    category.categoryName,
+                                    style: TextStyle(
+                                      color: selectedCategoryId == category.categoryId
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.chevron_right),
+                      onPressed: _scrollRight,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 15,),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    labelText: 'Search food...',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      searchQuery = value;
+                    });
+                  },
+                ),
+              ),
+              Expanded(
+                child: FutureBuilder<List<Food>>(
+                  future: futureMenu,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Failed to load menu: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No food items available.'));
+                    }
+
+                    // Filter menu based on selected category
+                    List<Food> filteredMenu = filterMenuByCategoryAndSearch(snapshot.data!);
+
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: itemsPerRow,
+                        childAspectRatio: 0.8,
+                      ),
+                      itemCount: filteredMenu.length,
+                      itemBuilder: (context, index) {
+                        final food = filteredMenu[index];
+                        return InkWell(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => FoodInfoScreen(foodId: food.foodId),
+                            ));
+                          },
+                          child: FoodCard(
+                            food: food,
+                            orderCount: orderCount[food.foodId] ?? 0,
+                            incrementOrder: () => incrementOrder(food.foodId),
+                            decrementOrder: () => decrementOrder(food.foodId),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

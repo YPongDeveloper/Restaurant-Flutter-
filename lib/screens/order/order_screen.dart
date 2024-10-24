@@ -130,6 +130,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         value: 3,
                         child: Text('Canceled', style: TextStyle(color: Colors.red)),
                       ),
+                      DropdownMenuItem(
+                        value: 5,
+                        child: Text('In Queue', style: TextStyle(color: Colors.blue[400])),
+                      ),
                     ],
                     dropdownColor: Colors.white,
                     iconEnabledColor: Colors.black,
@@ -216,6 +220,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
         return 'Paid';
       case 3:
         return 'Canceled';
+      case 5:
+        return 'In Queue';
       default:
         return 'Unknown';
     }
