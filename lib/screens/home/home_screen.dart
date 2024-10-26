@@ -212,8 +212,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
 
                       try {
-                        await OrderService().createOrder(orderRequest);
-
+                        int x =  await OrderService().createOrder(orderRequest);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Queue your number is : $x')),
+                        );
                         setState(() {
                           orderCount.clear();
                           _customerCountController.clear();

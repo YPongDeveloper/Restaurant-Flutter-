@@ -1,5 +1,7 @@
 // lib/services/order_service.dart
 import 'dart:convert';
+import 'dart:js';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/order_list_request_model.dart'; // Import your order model
 import '../config/api_constants.dart';
@@ -7,7 +9,7 @@ import '../models/order_model.dart';
 import '../models/order_response_model.dart';
 
 class OrderService {
-  Future<void> createOrder(OrderRequest orderRequest) async {
+  Future<int> createOrder(OrderRequest orderRequest) async {
     final response = await http.post(
       Uri.parse('${ApiConstants.orderAPI}/create'),
       headers: {
@@ -19,9 +21,18 @@ class OrderService {
     if (response.statusCode == 200) {
       // Handle successful response if needed
       print('Order created successfully: ${response.body}');
-    } else {
+      return 0;
+    } else if(response.statusCode == 201){
+
+      final responseBody = jsonDecode(response.body);
+      final dataResponse = responseBody['data'];
+      final queueId = dataResponse['queue_id'];
+      print('Order created successfully: ${queueId}');
+      return queueId;
+    }else{
       // Handle error response
       throw Exception('Failed to create order: ${response.body}');
+      return 0;
     }
   }
   Future<List<Order>> fetchOrders() async {

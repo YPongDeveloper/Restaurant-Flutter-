@@ -126,8 +126,9 @@ class _QueueScreenState extends State<QueueScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Order ID: ${order.orderId}', style: TextStyle(fontWeight: FontWeight.bold)),
+                              Text('Queue ID: ${order.queueId}', style: TextStyle(fontWeight: FontWeight.bold)),
                               SizedBox(height: 5),
+                              Text('Order ID: ${order.orderId}'),
                               Text('Customer ID: ${order.customerId}'),
                               Text('Total Amount: \$${order.totalAmount}'),
                               Text('Status: ${getStatusText(order.status)}'),

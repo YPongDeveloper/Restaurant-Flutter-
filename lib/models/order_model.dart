@@ -3,6 +3,7 @@ class Order {
   final int customerId;
   final int number;
   final int employeeId;
+  final int queueId;
   final int tableId;
   final int totalMenu;
   final int totalAmount;
@@ -12,6 +13,7 @@ class Order {
 
   Order({
     required this.orderId,
+    required this.queueId,
     required this.customerId,
     required this.number,
     required this.employeeId,
@@ -27,6 +29,7 @@ class Order {
     return Order(
       orderId: json['order_id'],
       customerId: json['customer_id'],
+      queueId: json['queue_id'],
       number: json['number'],
       employeeId: json['employee_id'],
       tableId: json['table_id'],
