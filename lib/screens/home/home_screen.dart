@@ -8,7 +8,10 @@ import '../../../widgets/food_card.dart'; // Import the FoodCard widget
 import '../../../models/order_list_request_model.dart'; // Import the OrderRequest model
 import '../../../services/order_service.dart';
 import '../../models/category_model.dart';
-import 'food_info_screen.dart'; // Import OrderService
+import 'food_info_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int? position;
   late Future<List<Food>> futureMenu;
   late Future<List<Category>> futureCategory;
   Map<int, int> orderCount = {};
@@ -30,7 +34,25 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadCategories();
+    _loadPosition();
     futureMenu = MenuService().fetchMenu();
+  }
+  Future<void> _loadPosition() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      position = prefs.getInt('position');
+    });
+  }
+
+  Future<void> _logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('position');
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+          (Route<dynamic> route) => false,  // This removes all previous routes
+    );
   }
   Future<void> _loadCategories() async {
     String categoryIcon = await getBase64Image();
@@ -109,7 +131,70 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return filteredMenu;
   }
+  void _showOrderChoiceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Select order formation"),
+          content: Text("Customers want to order for take-away or eat at the restaurant?"),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                if(orderCount.length!=0) {
+                  List<OrderListRequest> orderList = orderCount.entries
+                      .where((entry) => entry.value > 0)
+                      .map((entry) =>
+                      OrderListRequest(
+                        foodId: entry.key,
+                        quantity: entry.value,
+                      ))
+                      .toList();
 
+                  OrderRequest orderRequest = OrderRequest(
+                    number: 0,
+                    orderList: orderList,
+                  );
+
+                  try {
+                    int x = await OrderService().createOrder(orderRequest);
+                    if (x != 0) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Queue your number is : $x')),
+                      );
+                    }
+                    setState(() {
+                      orderCount.clear();
+                      futureMenu = MenuService().fetchMenu();
+                    });
+
+                    Navigator.of(context).pop();
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to create order: $e')),
+                    );
+                  }
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add food order')),
+                  );
+                }
+              },
+              child: Text("Take home"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // ปิด popup
+                _showOrderDialog(); // แสดง popup ของ _showOrderDialog
+              },
+              child: Text("Restaurant"),
+            ),
+          ],
+        );
+      },
+    );
+  }
   void _showOrderDialog() {
     showDialog(
       context: context,
@@ -213,9 +298,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       try {
                         int x =  await OrderService().createOrder(orderRequest);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Queue your number is : $x')),
-                        );
+                        if(x!=0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Queue your number is : $x')),
+                          );
+                        }
                         setState(() {
                           orderCount.clear();
                           _customerCountController.clear();
@@ -250,7 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-  // ... (rest of your existing code)
+
 
   @override
   Widget build(BuildContext context) {
@@ -268,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(30), color: Colors.yellow[200]),
             child: IconButton(
               icon: Icon(Icons.shopping_cart),
-              onPressed: _showOrderDialog,
+              onPressed: _showOrderChoiceDialog,
             ),
           ),
         ],
@@ -298,24 +385,10 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.person, color: Colors.green), // เปลี่ยนสีเป็นสีเขียว
-              title: Text('Employees'),
-              onTap: () {
-                Navigator.pushNamed(context, '/employees');
-              },
-            ),
-            ListTile(
               leading: Icon(Icons.shopping_bag, color: Colors.orange), // เปลี่ยนสีเป็นสีส้ม
               title: Text('Orders'),
               onTap: () {
                 Navigator.pushNamed(context, '/orders');
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.shopping_bag, color: Colors.grey), // เปลี่ยนสีเป็นสีส้ม
-              title: Text('Management'),
-              onTap: () {
-                Navigator.pushNamed(context, '/management');
               },
             ),
             ListTile(
@@ -324,6 +397,23 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.pushNamed(context, '/queueScreen');
               },
+            ),
+            if (position==2) ...[
+              ListTile(
+                leading: Icon(Icons.person, color: Colors.green),
+                title: Text('Employees'),
+                onTap: () => Navigator.pushNamed(context, '/employees'),
+              ),
+              ListTile(
+                leading: Icon(Icons.shopping_bag, color: Colors.grey),
+                title: Text('Management'),
+                onTap: () => Navigator.pushNamed(context, '/management'),
+              ),
+            ],
+            ListTile(
+              leading: Icon(Icons.logout, color: Colors.red),
+              title: Text('Logout'),
+              onTap: _logout,
             ),
           ],
         ),

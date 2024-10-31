@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../home/login_screen.dart';
 import '/models/order_model.dart';
 import '../../../services/order_service.dart';
 import '../../../widgets/order_detail_dialog.dart';
@@ -9,6 +11,7 @@ class QueueScreen extends StatefulWidget {
 }
 
 class _QueueScreenState extends State<QueueScreen> {
+  int? position;
   late Future<List<Order>> futureOrders;
   List<Order>? filteredOrders;
   int selectedStatus = 5;
@@ -17,8 +20,25 @@ class _QueueScreenState extends State<QueueScreen> {
   void initState() {
     super.initState();
     futureOrders = OrderService().fetchOrders();
+    _loadPosition();
+  }
+  Future<void> _loadPosition() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      position = prefs.getInt('position');
+    });
   }
 
+  Future<void> _logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('position');
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+          (Route<dynamic> route) => false,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,24 +72,10 @@ class _QueueScreenState extends State<QueueScreen> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.person, color: Colors.green),
-              title: Text('Employees'),
-              onTap: () {
-                Navigator.pushNamed(context, '/employees');
-              },
-            ),
-            ListTile(
               leading: Icon(Icons.shopping_bag, color: Colors.orange),
               title: Text('Orders'),
               onTap: () {
                 Navigator.pushNamed(context, '/orders');
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.shopping_bag, color: Colors.grey),
-              title: Text('Management'),
-              onTap: () {
-                Navigator.pushNamed(context, '/management');
               },
             ),
             ListTile(
@@ -78,6 +84,23 @@ class _QueueScreenState extends State<QueueScreen> {
               onTap: () {
                 Navigator.pushNamed(context, '/queueScreen');
               },
+            ),
+            if (position==2) ...[
+              ListTile(
+                leading: Icon(Icons.person, color: Colors.green),
+                title: Text('Employees'),
+                onTap: () => Navigator.pushNamed(context, '/employees'),
+              ),
+              ListTile(
+                leading: Icon(Icons.shopping_bag, color: Colors.grey),
+                title: Text('Management'),
+                onTap: () => Navigator.pushNamed(context, '/management'),
+              ),
+            ],
+            ListTile(
+              leading: Icon(Icons.logout, color: Colors.red),
+              title: Text('Logout'),
+              onTap: _logout,
             ),
           ],
         ),
@@ -160,6 +183,8 @@ class _QueueScreenState extends State<QueueScreen> {
         return 'Paid';
       case 3:
         return 'Canceled';
+      case 5:
+        return 'In Queue';
       default:
         return 'Unknown';
     }

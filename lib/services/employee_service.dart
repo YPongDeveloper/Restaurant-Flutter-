@@ -41,14 +41,16 @@ class EmployeeService {
       throw Exception('Failed to terminate employee');
     }
   }
-  Future<void> hireEmployee(String firstName, String lastName) async {
+  Future<void> hireEmployee(String firstName, String lastName,String username,String password,int position) async {
     final response = await http.post(
       Uri.parse('${ApiConstants.employeesAPI}/hire'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "first_name": firstName,
         "last_name": lastName,
-        "status": 0 // Assuming default status is 'Available'
+        "position": position,
+        "username": username,
+        "password": password
       }),
     );
 

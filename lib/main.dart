@@ -1,4 +1,5 @@
 import 'package:employee/routes/app_routes.dart';
+import 'package:employee/screens/home/splash_screen.dart';
 import 'package:employee/screens/order/order_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/employee/employee_screen.dart';
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Restaurant App',
-      initialRoute: '/home',
+      home: SplashScreen(),
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

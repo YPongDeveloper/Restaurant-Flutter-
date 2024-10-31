@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../screens/employee/employee_screen.dart';
 import '../screens/home/home_screen.dart';
+import '../screens/home/login_screen.dart';
 import '../screens/management/menu_management_screen.dart';
 import '../screens/order/order_screen.dart';
 import '../screens/queue/queue_screen.dart';
@@ -18,6 +19,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => MenuManagementScreen());
       case '/queueScreen':
         return MaterialPageRoute(builder: (_) => QueueScreen());
+      case '/login':
+        return MaterialPageRoute(builder: (_) => LoginScreen());
       default:
         return MaterialPageRoute(builder: (_) => HomeScreen());
     }
